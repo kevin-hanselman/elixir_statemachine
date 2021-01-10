@@ -65,8 +65,8 @@ defmodule Microwave do
       {nil, %Microwave{time: t - 1}}
     end
 
-    def on_event({:key_press, :stop_clear}, _data) do
-      {Microwave, nil}
+    def on_event({:key_press, :stop_clear}, data) do
+      {Microwave.Idle, data}
     end
   end
 

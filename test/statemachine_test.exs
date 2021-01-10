@@ -62,5 +62,14 @@ defmodule StateMachine.Test do
 
     :ok = GenServer.call(sm, :tick)
     assert :sys.get_state(sm) == {Microwave.Idle, %Microwave{time: 0}}
+
+    :ok = GenServer.call(sm, {:key_press, 2})
+    assert :sys.get_state(sm) == {Microwave.Idle, %Microwave{time: 2}}
+
+    :ok = GenServer.call(sm, {:key_press, :start})
+    assert :sys.get_state(sm) == {Microwave.Running, %Microwave{time: 2}}
+
+    :ok = GenServer.call(sm, {:key_press, :stop_clear})
+    assert :sys.get_state(sm) == {Microwave.Idle, %Microwave{time: 2}}
   end
 end
