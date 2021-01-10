@@ -5,8 +5,8 @@ educational purposes.
 
 ## Usage
 
-Here's an example state machine for a microwave. This state machine is copied
-in `test/test_helper.exs` for testing purposes.
+Here's an example state machine for a microwave. Nested modules create
+hierarchical states.
 
 ```elixir
 defmodule Microwave do
@@ -77,26 +77,27 @@ defmodule Microwave do
 end
 ```
 
-You use the state machine like this:
+Instantiating the state machine is as easy as starting a `StateMachine`
+GenServer with the root `State` module as the initial argument. Then you can
+send the state machine events using the GenServer API.
 
 ```elixir
+# start a Microwave state machine
 {:ok, sm} = GenServer.start_link(StateMachine, Microwave)
-assert :sys.get_state(sm) == {Microwave.Idle, %Microwave{time: 0}}
 
+# print all events and resulting state machine state
+:sys.trace(sm, true)
+
+# send events to the microwave
 :ok = GenServer.call(sm, {:key_press, 1})
-assert :sys.get_state(sm) == {Microwave.Idle, %Microwave{time: 1}}
 
 :ok = GenServer.call(sm, {:key_press, 2})
-assert :sys.get_state(sm) == {Microwave.Idle, %Microwave{time: 12}}
 
 :ok = GenServer.call(sm, {:key_press, :start})
-assert :sys.get_state(sm) == {Microwave.Running, %Microwave{time: 12}}
 
 :ok = GenServer.call(sm, :tick)
-assert :sys.get_state(sm) == {Microwave.Running, %Microwave{time: 11}}
 
 :ok = GenServer.call(sm, :open_door)
-assert :sys.get_state(sm) == {Microwave.Idle.DoorOpen, %Microwave{time: 12}}
 ```
 
 ## Known bugs/deficiencies
